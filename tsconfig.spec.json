@@ -1,0 +1,23 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "strict": false,
+    "types": ["vitest/globals", "node", "@analogjs/vitest-angular"],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "@app/*": ["src/app/*"],
+      "@core/*": ["src/app/core/*"],
+      "@shared/*": ["src/app/shared/*"],
+      "@env/*": ["src/environments/*"],
+    },
+  },
+  "include": ["tests/**/*.spec.ts", "src/**/*.spec.ts", "tests/test-setup.ts"],
+  "exclude": ["node_modules"],
+}

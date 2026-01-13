@@ -1,0 +1,53 @@
+<div>
+  <div
+    class="w-full max-w-6xl overflow-hidden rounded-xl shadow-2xl border border-gray-700 bg-white"
+  >
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-gray-100 border-b border-gray-200">
+          <th
+            class="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider w-12 text-center"
+          >
+            #
+          </th>
+          <th class="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider w-1/4">
+            Title
+          </th>
+          <th class="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider">Body</th>
+          <th
+            class="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider text-center"
+          >
+            Action
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        @for(item of items; track $index){
+        <tr class="hover:bg-blue-50 transition-colors duration-200">
+          <td class="px-6 py-4 text-sm text-gray-500 font-medium text-center">{{$index +1 }}</td>
+          <td class="px-6 py-4 text-sm font-semibold text-gray-900 leading-tight">
+            {{item.title}}
+          </td>
+          <td class="bg-gray-200! text-gray-900!">{{item.body}}</td>
+          <td class="px-6 py-4 text-sm text-gray-600 leading-relaxed">
+            <div class="flex flex-col sm:flex-row gap-2 justify-center">
+              <button
+                class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-sm cursor-pointer"
+                (click)="onEdit(item)"
+              >
+                Editar
+              </button>
+              <button
+                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-sm cursor-pointer"
+                (click)="onDelete(item.id)"
+              >
+                Eliminar
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

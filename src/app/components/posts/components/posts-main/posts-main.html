@@ -1,0 +1,10 @@
+<div class="min-h-screen w-full flex justify-center items-center p-4">
+  <div>
+    <app-posts-filter></app-posts-filter>
+    <app-posts-list
+      [items]="posts.value()!"
+      (editChange)="edit($event)"
+      (deleteChange)="delete($event)"
+    ></app-posts-list>
+  </div>
+</div>
