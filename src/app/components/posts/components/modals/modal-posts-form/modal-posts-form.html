@@ -1,0 +1,76 @@
+<div>
+  <div class="grid grid-cols-2 gap-2 mb-4">
+    <div class="gap-2 mb-3">
+      <label for="dateInit" class="font-semibold w-24"
+        >Título <span class="text-red-500">*</span></label
+      >
+      <div class="relative">
+        <input
+          type="text"
+          id="title"
+          class="w-full border-2 border-gray-300 p-2 rounded"
+          [formField]="form.title"
+        />
+      </div>
+    </div>
+
+    <div class="gap-2 mb-3">
+      <label for="userId" class="font-semibold w-24">
+        Usuario <span class="text-red-500">*</span>
+      </label>
+      <div class="relative">
+        <p-select
+          [options]="options"
+          [formField]="form.userId"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Seleccione un usuario"
+          class="w-full"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="gap-2 mb-3">
+    <label for="dateInit" class="font-semibold w-24"
+      >Comentario <span class="text-red-500">*</span></label
+    >
+    <div class="relative">
+      <textarea
+        id="body"
+        class="w-full border-2 border-gray-300 p-2 rounded"
+        [formField]="form.body"
+      ></textarea>
+    </div>
+  </div>
+  <div class="flex justify-end gap-2">
+    <button
+      type="button"
+      class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      (click)="closeDialog(false)"
+    >
+      Cancelar
+    </button>
+    @if(isLoading){
+    <button
+      type="button"
+      class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+    >
+      <span
+        class="w-4 h-4 mr-2 border-2 border-white rounded-full spinner-border border-t-transparent animate-spin"
+        role="status"
+      >
+        <span class="sr-only">Loading...</span>
+      </span>
+      Loading...
+    </button>
+    }@else{
+    <button
+      type="button"
+      class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      (click)="onSave()"
+    >
+      Guardar
+    </button>
+    }
+  </div>
+</div>

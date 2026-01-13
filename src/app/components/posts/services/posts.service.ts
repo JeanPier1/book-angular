@@ -12,4 +12,20 @@ export class PostsService {
       params: params,
     });
   }
+
+  getPostsById(id: number) {
+    return this.http.get<Posts>(`${environment.apiUrl}/${environment.api.posts}/${id}`);
+  }
+
+  savePosts(body: any) {
+    return this.http.post(`${environment.apiUrl}/${environment.api.posts}`, body);
+  }
+
+  updatePosts(id: number, body: any) {
+    return this.http.put(`${environment.apiUrl}/${environment.api.posts}/${id}`, body);
+  }
+
+  deletePosts(id: number) {
+    return this.http.delete(`${environment.apiUrl}/${environment.api.posts}/${id}`);
+  }
 }
