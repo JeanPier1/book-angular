@@ -4,6 +4,8 @@ import { PostsService } from '@/app/components/posts/services/posts.service';
 import { of } from 'rxjs';
 import { Posts } from '@/app/components/posts/models/posts.model';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 
 describe('<app-posts-main/>', () => {
   let component: PostsMain;
@@ -11,6 +13,20 @@ describe('<app-posts-main/>', () => {
 
   const postsServiceMock = {
     getPosts: vi.fn(),
+    getPostsById: vi.fn(),
+    deletePosts: vi.fn(),
+  };
+
+  const dialogServiceMock = {
+    open: vi.fn().mockReturnValue({ onClose: of(true) }),
+  };
+
+  const messageServiceMock = { add: vi.fn() };
+
+  const confirmationServiceMock = {
+    confirm: vi.fn((config) => {
+      if (config.accept) config.accept();
+    }),
   };
 
   const mockPosts: Posts[] = [
@@ -20,10 +36,17 @@ describe('<app-posts-main/>', () => {
 
   beforeEach(async () => {
     postsServiceMock.getPosts.mockReturnValue(of(mockPosts));
+    postsServiceMock.getPostsById.mockReturnValue(of(mockPosts[0]));
+    postsServiceMock.deletePosts.mockReturnValue(of({}));
 
     await TestBed.configureTestingModule({
       imports: [PostsMain],
-      providers: [{ provide: PostsService, useValue: postsServiceMock }],
+      providers: [
+        { provide: PostsService, useValue: postsServiceMock },
+        { provide: DialogService, useValue: dialogServiceMock },
+        { provide: MessageService, useValue: messageServiceMock },
+        { provide: ConfirmationService, useValue: confirmationServiceMock },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PostsMain);
@@ -68,5 +91,17 @@ describe('<app-posts-main/>', () => {
     component.edit(dummyPost);
 
     expect(editSpy).toHaveBeenCalledWith(dummyPost);
+  });
+
+  it('debería abrir el diálogo de edición y recargar al cerrar', async () => {
+    const reloadSpy = vi.spyOn(component.posts, 'reload');
+    const dummyPost = mockPosts[0];
+    component.edit(dummyPost);
+    expect(postsServiceMock.getPostsById).toHaveBeenCalledWith(dummyPost.id);
+    expect(dialogServiceMock.open).toHaveBeenCalled();
+    expect(reloadSpy).toHaveBeenCalled();
+    expect(messageServiceMock.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success' }),
+    );
   });
 });
