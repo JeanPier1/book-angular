@@ -1,65 +1,75 @@
-// import { ModalPostsForm } from '@/app/components/posts/components/modals/modal-posts-form/modal-posts-form';
-// import { Posts } from '@/app/components/posts/models/posts.model';
-// import { PostsService } from '@/app/components/posts/services/posts.service';
-// import { provideHttpClient } from '@angular/common/http';
-// import { provideHttpClientTesting } from '@angular/common/http/testing';
-// import { ComponentFixture, TestBed } from '@angular/core/testing';
-// import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
-// import { of } from 'rxjs';
-// import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { ModalPostsForm } from '@/app/components/posts/components/modals/modal-posts-form/modal-posts-form';
+import { signal } from '@angular/core';
+import { ComponentFixture } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { vi } from 'vitest';
 
-// describe('<app-posts-modal/>', () => {
-//   let component: ModalPostsForm;
-//   let fixture: ComponentFixture<ModalPostsForm>;
+vi.mock('@angular/forms/signals', () => {
+  return {
+    form: () => ({
+      touched: () => {},
+      valid: () => true,
+      value: () => ({ id: 1, title: 'Test', body: 'Body', userId: 1 }),
+    }),
+    required: () => {},
+    minLength: () => {},
+  };
+});
 
-//   const mockDialogRef = {
-//     close: vi.fn(),
-//   };
+describe('ModalPostsForm', () => {
+  let component: ModalPostsForm;
+  let fixture: ComponentFixture<ModalPostsForm>;
+  let mockDialogRef: any;
+  let mockPostsService: any;
 
-//   const mockPostsService = {
-//     savePosts: vi.fn(() => of({ id: 101 })),
-//     updatePosts: vi.fn(() => of({ id: 1 })),
-//   };
+  beforeEach(() => {
+    mockDialogRef = { close: vi.fn() };
+    mockPostsService = {
+      savePosts: vi.fn(() => of({ id: 101 })),
+      updatePosts: vi.fn(() => of({ id: 1 })),
+    };
 
-//   const mockDialogConfig = {
-//     data: { posts: null },
-//   };
+    component = new ModalPostsForm();
 
-//   beforeEach(async () => {
-//     vi.clearAllMocks();
+    Object.assign(component, {
+      ref: mockDialogRef,
+      service: mockPostsService,
+      dialogConfig: {
+        data: { posts: { id: 1, title: 'Test', body: 'Body', userId: 1 } },
+      },
+      formSignal: signal({ id: 1, title: 'Test', body: 'Body', userId: 1 }),
+      form: {
+        touched: vi.fn(),
+        valid: vi.fn(() => true),
+        value: vi.fn(() => ({ id: 1, title: 'Test', body: 'Body', userId: 1 })),
+      },
+      isLoading: false,
+      data: { id: 1, title: 'Test', body: 'Body', userId: 1 },
+    });
 
-//     await TestBed.configureTestingModule({
-//       imports: [ModalPostsForm],
-//       providers: [
-//         provideHttpClient(),
-//         provideHttpClientTesting(),
-//         { provide: DynamicDialogRef, useValue: mockDialogRef },
-//         { provide: PostsService, useValue: mockPostsService },
-//         { provide: DynamicDialogConfig, useValue: mockDialogConfig },
-//       ],
-//     }).compileComponents();
+    component.ngOnInit();
+  });
 
-//     fixture = TestBed.createComponent(ModalPostsForm);
-//     component = fixture.componentInstance;
-//     fixture.detectChanges();
-//   });
+  it('debe crear el componente', () => {
+    expect(component).toBeTruthy();
+  });
 
-//   it('should create the app', () => {
-//     expect(true).toBeTruthy();
-//   });
+  it('debe inicializar el formulario con datos del config', () => {
+    expect(component.formSignal().title).toBe('Test');
+  });
 
-//   it('debería inicializar el formulario con datos cuando existen en el config', () => {
-//     const mockPost: Posts = { id: 1, title: 'test', body: 'test', userId: 1 };
+  it('debe llamar a updatePosts cuando el formulario es válido y tiene data', () => {
+    component.onSave();
+    expect(mockPostsService.updatePosts).toHaveBeenCalled();
+    expect(mockDialogRef.close).toHaveBeenCalledWith(true);
+  });
 
-//     (component as any).dialogConfig.data = { posts: mockPost };
-//     component.ngOnInit();
-//     expect(component.data).toEqual(mockPost);
-//     expect(component.form().value().title).toBe('Título Test');
-//   });
-// });
+  it('debe llamar a savePosts cuando el formulario es válido y no tiene data', () => {
+    component.data = null;
+    component.formSignal.set({ id: 0, title: 'Nuevo', body: 'Nuevo body', userId: 1 });
 
-describe('<app-posts-modal>', () => {
-  it('should create the app', () => {
-    expect(true).toBeTruthy();
+    component.onSave();
+    expect(mockPostsService.savePosts).toHaveBeenCalled();
+    expect(mockDialogRef.close).toHaveBeenCalledWith(true);
   });
 });
